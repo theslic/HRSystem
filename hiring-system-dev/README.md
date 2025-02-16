@@ -58,29 +58,26 @@ Backend API: http://localhost:5000
 
 ## Contributors
 
+### Sean Li
+- **Responsibilities**:
+  - Handle new employee addtion and email notification.
+  - Handle the onboarding review process.
+  - Facility Report's comments
+
 ### Susie Shi
-- **Role**: Team lead, Employee Management, Housing & Facility Reports
 - **Responsibilities**:
   - Team and project management
   - Handle employee management functionalities.
   - Generate and manage reports related to employee and housing data.
 
 ### Tu Ho
-- **Role**: Authentication & Onboarding Application
 - **Responsibilities**: 
   - Develop and maintain the authentication process for the application.
   - Housing assignments.
   - Implement onboarding workflows.
 
-### Sean Li
-- **Role**: Onboarding Review, New User Addition & Other Features
-- **Responsibilities**:
-  - Handle new employee addtion and email notification.
-  - Handle the onboarding review process.
-  - Facility Report's comments
 
 ### Stella Li
-- **Role**: Visa Status & MainLayout
 - **Responsibilities**:
   - Develop main layouts
   - Manage the implementation of visa status features.
