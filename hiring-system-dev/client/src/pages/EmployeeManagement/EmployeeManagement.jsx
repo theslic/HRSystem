@@ -1,0 +1,132 @@
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+import Paper from '@mui/material/Paper';
+// import Link from '@mui/material/Link';
+import SearchBar from '../../components/SearchBar/SearchBar';
+import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchEmployeeList } from '../../store/employeeSlice/employee.thunk';
+import { clearSearch, setBaseQuery, setFilteredList } from '../../store/searchSlice/search.slice';
+import Loading from '../../components/Loading';
+import { clearError } from '../../store/employeeSlice/employee.slice';
+import { showNotification } from '../../store/notificationSlice/notification.slice';
+import { Link } from 'react-router-dom';
+
+const EmployeeManagement = () => {
+    const dispatch = useDispatch();
+    const { list, loading, error } = useSelector((state) => state.employee);
+    const { query, filteredList } = useSelector((state) => state.search);
+
+    useEffect(() => {
+        const fetchList = async () => {
+            await dispatch(fetchEmployeeList());
+        };
+
+        fetchList();
+    }, [dispatch]);
+
+    useEffect(() => {
+        if (list) {
+            dispatch(setFilteredList(list));
+            setNameSet();
+        }
+    }, [list]);
+
+    if (loading) {
+        return <Loading />;
+    }
+
+    if (error) {
+        dispatch(showNotification({ message: error, severity: 'error' }));
+        dispatch(clearError);
+    }
+
+    const setNameSet = async () => {
+        const nameSet = new Set();
+        await list.forEach((employee) => {
+            if (employee.preferredName) {
+                nameSet.add(employee.preferredName);
+            }
+            if (employee.firstName) {
+                nameSet.add(employee.firstName);
+            }
+            if (employee.lastName) {
+                nameSet.add(employee.lastName);
+            }
+        });
+        const uniqueNamesArray = Array.from(nameSet);
+
+        dispatch(setBaseQuery(uniqueNamesArray));
+    };
+
+    const handleReset = () => {
+        dispatch(clearSearch(list));
+    };
+
+    const handleSearch = (value) => {
+        console.log('handleSearch', query, value);
+
+        const results = list.filter(
+            (item) =>
+                item.firstName?.toLowerCase().includes(value.toLowerCase()) ||
+                item.lastName?.toLowerCase().includes(value.toLowerCase()) ||
+                item.preferredName?.toLowerCase().includes(value.toLowerCase())
+        );
+        console.log(results);
+
+        dispatch(setFilteredList(results));
+    };
+
+    return (
+        <section className='flex-col g-1 align-start'>
+            <header>
+                <h1 className='title'>Employee Management</h1>
+            </header>
+            <SearchBar handleReset={handleReset} handleSearch={handleSearch} />
+            <TableContainer component={Paper}>
+                <Table sx={{ minWidth: 650 }} aria-label='simple table'>
+                    <TableHead>
+                        <TableRow>
+                            <TableCell>Name</TableCell>
+                            <TableCell>Social Security #</TableCell>
+                            <TableCell>Work Authorization</TableCell>
+                            <TableCell>Phone</TableCell>
+                            <TableCell>Email</TableCell>
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                        {filteredList.length ? (
+                            filteredList.map((row) => (
+                                <TableRow key={row._id} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+                                    <TableCell component='th' scope='row'>
+                                        <Link to={`/hr/employee-profile?username=${row.username}`} style={{textDecoration: "underline"}}>
+                                            {row.firstName}
+                                            {row.middleName ? ` ${row.middleName} ` : ' '}
+                                            {row.lastName}
+                                        </Link>
+                                    </TableCell>
+                                    <TableCell>{row.ssn}</TableCell>
+                                    <TableCell>{row.visaStatus?.visaTitle}</TableCell>
+                                    <TableCell>{row.cellPhone}</TableCell>
+                                    <TableCell>{row.email}</TableCell>
+                                </TableRow>
+                            ))
+                        ) : (
+                            <TableRow sx={{ textAlign: 'center' }}>
+                                <TableCell colSpan={5} align='center'>
+                                    No data found
+                                </TableCell>
+                            </TableRow>
+                        )}
+                    </TableBody>
+                </Table>
+            </TableContainer>
+        </section>
+    );
+};
+
+export default EmployeeManagement;

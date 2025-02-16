@@ -1,0 +1,25 @@
+.outlined-container {
+    position: relative;
+    width: 100%;
+    border: 1px solid #f1f6f9;
+    border-radius: 1rem;
+    padding: 1.5rem;
+    background-color: #fff;
+    .title {
+        padding-bottom: 1rem;
+    }
+}
+
+.buttons {
+    position: absolute;
+    top: 1.5rem;
+    right: 1.5rem;
+    display: flex;
+    gap: 1rem;
+}
+
+.remove-btn {
+    width: 100%;
+}
+
+
